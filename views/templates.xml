@@ -1,0 +1,9 @@
+<odoo>
+    <data>
+        <template id="assets_backend" name="dh_product_pick_barcode assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/dh_product_pick_barcode/static/src/js/barcode_picking.js"></script>
+            </xpath>
+        </template>
+    </data>
+</odoo>

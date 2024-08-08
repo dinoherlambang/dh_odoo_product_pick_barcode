@@ -1,0 +1,36 @@
+<odoo>
+    <record id="view_picking_form_barcode" model="ir.ui.view">
+        <field name="name">stock.picking.form.barcode</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <field name="state" invisible="1"/>
+                <field name="picking_type_code" invisible="1"/>
+                <div class="o_barcode_scanner" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}">
+                    <h1>Scan products</h1>
+                    <input type="text" class="o_barcode_input" autofocus="autofocus"/>
+                    <input type="number" class="o_quantity_input" placeholder="Quantity" min="1" value="1"/>
+                    <button name="process_barcode_from_ui" string="Add" type="object" class="btn btn-primary"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_inventory_form_barcode" model="ir.ui.view">
+        <field name="name">stock.inventory.form.barcode</field>
+        <field name="model">stock.inventory</field>
+        <field name="inherit_id" ref="stock.view_inventory_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <field name="state" invisible="1"/>
+                <div class="o_barcode_scanner" attrs="{'invisible': [('state', '!=', 'in_progress')]}">
+                    <h1>Scan products</h1>
+                    <input type="text" class="o_barcode_input" autofocus="autofocus"/>
+                    <input type="number" class="o_quantity_input" placeholder="Quantity" min="1" value="1"/>
+                    <button name="process_barcode_from_ui" string="Add" type="object" class="btn btn-primary"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

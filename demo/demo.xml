@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="product_demo_1" model="product.product">
+            <field name="name">Demo Product 1</field>
+            <field name="type">product</field>
+            <field name="ean13">5901234123457</field>
+        </record>
+
+        <record id="product_demo_2" model="product.product">
+            <field name="name">Demo Product 2</field>
+            <field name="type">product</field>
+        </record>
+    </data>
+</odoo>

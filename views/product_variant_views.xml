@@ -1,0 +1,35 @@
+<odoo>
+    <record id="view_product_variant_tree_custom" model="ir.ui.view">
+        <field name="name">product.variant.tree.custom</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="ean13"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_product_variant_form_custom" model="ir.ui.view">
+        <field name="name">product.variant.form.custom</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="after">
+                <field name="ean13"/>
+                <button name="action_generate_ean13" string="Generate EAN-13" type="object" class="oe_inline oe_edit_only" attrs="{'invisible': [('ean13', '!=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_variant_search_custom" model="ir.ui.view">
+        <field name="name">product.variant.search.custom</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="ean13" string="EAN-13 Barcode"/>
+            </field>
+        </field>
+    </record>
+</odoo>
