@@ -31,7 +31,9 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
                     self.do_notify(_t("Success"), result.message, false);
                     self.reload();
                 } else {
-                    if (result.excess) {
+                    if (result.no_product_found) {
+                        self.do_warn(_t("Product Not Found"), result.message);
+                    } else if (result.excess) {
                         self.do_warn(_t("Excess Quantity"), result.message, function () {
                             self._rpc({
                                 model: model,

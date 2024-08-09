@@ -13,7 +13,11 @@ class StockPicking(models.Model):
         product = self._find_product_by_scan_option(barcode)
 
         if not product:
-            return {'success': False, 'message': _('No product found with this code')}
+            return {
+                'success': False,
+                'message': _('No product found with this code. Please check the barcode and try again.'),
+                'no_product_found': True
+            }
 
         expected_move_lines = picking.move_line_ids.filtered(lambda l: l.product_id != product and l.qty_done < l.product_uom_qty)
         if expected_move_lines:
@@ -57,7 +61,11 @@ class StockPicking(models.Model):
             if lot:
                 product = lot.product_id
             else:
-                return {'success': False, 'message': _('No product or serial number found with this code')}
+                return {
+                    'success': False,
+                    'message': _('No product or serial number found with this code. Please check the barcode and try again.'),
+                    'no_product_found': True
+                }
 
         move_line = picking.move_line_ids.filtered(lambda l: l.product_id == product)
         if move_line:
