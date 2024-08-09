@@ -34,35 +34,11 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
                     if (result.no_product_found) {
                         self.do_warn(_t("Product Not Found"), result.message);
                     } else if (result.excess) {
-                        self.do_warn(_t("Excess Quantity"), result.message, function () {
-                            self._rpc({
-                                model: model,
-                                method: 'force_update_quantity',
-                                args: [self.handle, barcode, quantity],
-                            }).then(function () {
-                                self.reload();
-                            });
-                        });
+                        self.do_warn(_t("Excess Quantity"), result.message);
                     } else if (result.product_not_in_picking) {
-                        self.do_warn(_t("Product Not in Picking"), result.message, function () {
-                            self._rpc({
-                                model: model,
-                                method: 'add_product_to_picking',
-                                args: [self.handle, result.product_id, quantity],
-                            }).then(function () {
-                                self.reload();
-                            });
-                        });
+                        self.do_warn(_t("Product Not in Picking"), result.message);
                     } else if (result.unexpected_product) {
-                        self.do_warn(_t("Unexpected Product"), result.message, function () {
-                            self._rpc({
-                                model: model,
-                                method: 'add_product_to_picking',
-                                args: [self.handle, result.scanned_product_id, quantity],
-                            }).then(function () {
-                                self.reload();
-                            });
-                        });
+                        self.do_warn(_t("Unexpected Product"), result.message);
                     } else {
                         self.do_warn(_t("Warning"), result.message);
                     }

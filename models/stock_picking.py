@@ -42,10 +42,10 @@ class StockPicking(models.Model):
         else:
             return {
                 'success': False,
-                'message': _('Product not in the picking. Do you want to add it?'),
-                'product_not_in_picking': True,
-                'product_id': product.id
+                'message': _('Product not in the original picking. Cannot be added.'),
+                'product_not_in_picking': True
             }
+
 
     @api.model
     def process_barcode_from_ui_incoming(self, picking_id, barcode, quantity=1):
@@ -119,24 +119,5 @@ class StockPicking(models.Model):
                 'location_dest_id': picking.location_dest_id.id,
                 'qty_done': quantity,
             })
-
-        return True
-
-    @api.model
-    def add_product_to_picking(self, picking_id, product_id, quantity):
-        picking = self.browse(picking_id)
-        product = self.env['product.product'].browse(product_id)
-
-        move = self.env['stock.move'].create({
-            'name': product.name,
-            'product_id': product.id,
-            'product_uom_qty': quantity,
-            'product_uom': product.uom_id.id,
-            'picking_id': picking.id,
-            'location_id': picking.location_id.id,
-            'location_dest_id': picking.location_dest_id.id,
-        })
-        move._action_confirm()
-        move._action_assign()
 
         return True
