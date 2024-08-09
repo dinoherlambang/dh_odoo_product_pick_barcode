@@ -51,6 +51,16 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
                                 self.reload();
                             });
                         });
+                    } else if (result.unexpected_product) {
+                        self.do_warn(_t("Unexpected Product"), result.message, function () {
+                            self._rpc({
+                                model: model,
+                                method: 'add_product_to_picking',
+                                args: [self.handle, result.scanned_product_id, quantity],
+                            }).then(function () {
+                                self.reload();
+                            });
+                        });
                     } else {
                         self.do_warn(_t("Warning"), result.message);
                     }

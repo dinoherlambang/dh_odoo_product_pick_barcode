@@ -15,6 +15,16 @@ class StockPicking(models.Model):
         if not product:
             return {'success': False, 'message': _('No product found with this code')}
 
+        expected_move_lines = picking.move_line_ids.filtered(lambda l: l.product_id != product and l.qty_done < l.product_uom_qty)
+        if expected_move_lines:
+            expected_products = ', '.join(expected_move_lines.mapped('product_id.name'))
+            return {
+                'success': False,
+                'message': _('Warning: Scanned product (%s) is different from expected products (%s)') % (product.name, expected_products),
+                'unexpected_product': True,
+                'scanned_product_id': product.id
+            }
+
         move_line = picking.move_line_ids.filtered(lambda l: l.product_id == product)
         if move_line:
             if move_line.qty_done + quantity > move_line.product_uom_qty:
