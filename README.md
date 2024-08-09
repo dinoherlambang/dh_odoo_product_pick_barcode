@@ -44,6 +44,17 @@ No additional configuration is required. The module automatically adds barcode s
 - Custom JavaScript for capturing barcode scan events and communicating with the server
 - Compatible with Odoo 13.0 Community Edition
 
+### Barcode Processing Logic
+The `process_barcode_from_ui` method in the `StockPicking` model handles the core barcode scanning functionality:
+
+1. Checks if the picking is already validated.
+2. Searches for the product using the scanned barcode.
+3. Finds or creates a move line for the product.
+4. Checks if the new quantity exceeds the initial demand.
+5. Updates the quantity if it doesn't exceed the initial demand.
+
+This logic ensures accurate and efficient processing of scanned products during stock operations.
+
 ## Dependencies
 - `stock` module
 

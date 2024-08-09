@@ -40,6 +40,17 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
                                 self.reload();
                             });
                         });
+                    } else if (result.product_not_in_picking) {
+                        self.do_warn(_t("Product Not in Picking"), result.message, function () {
+                            // Callback function to add product if user confirms
+                            self._rpc({
+                                model: model,
+                                method: 'add_product_to_picking',
+                                args: [self.handle, result.product_id, quantity],
+                            }).then(function () {
+                                self.reload();
+                            });
+                        });
                     } else {
                         self.do_warn(_t("Warning"), result.message);
                     }
@@ -47,6 +58,6 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
             }).guardedCatch(function (error) {
                 self.do_warn(_t("Error"), _t("An error occurred while processing the barcode. Please try again."));
             });
-        },
+        }
     });
 });

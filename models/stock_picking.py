@@ -10,20 +10,33 @@ class StockPicking(models.Model):
         if picking.state == 'done':
             return {'success': False, 'message': _('The picking is already validated')}
 
-        product = self.env['product.product'].search([('ean13', '=', barcode)], limit=1)
+        scan_option = self.env['ir.config_parameter'].sudo().get_param('dh_product_pick_barcode.product_scan_option', 'barcode')
+        
+        if scan_option == 'barcode':
+            product = self.env['product.product'].search([('ean13', '=', barcode)], limit=1)
+        elif scan_option == 'qrcode':
+            product = self.env['product.product'].search([('qr_code', '=', barcode)], limit=1)  # Assuming you have a qr_code field
+        elif scan_option == 'internal_reference':
+            product = self.env['product.product'].search([('default_code', '=', barcode)], limit=1)
+        else:  # 'all' option
+            product = self.env['product.product'].search(['|', '|',
+                ('ean13', '=', barcode),
+                ('qr_code', '=', barcode),
+                ('default_code', '=', barcode)
+            ], limit=1)
+
         if not product:
-            return {'success': False, 'message': _('No product found with this barcode')}
+            return {'success': False, 'message': _('No product found with this code')}
 
         move_line = picking.move_line_ids.filtered(lambda l: l.product_id == product)
         if not move_line:
-            # Create a new move line if the product is not in the picking
-            move_line = self.env['stock.move.line'].create({
+            return {
+                'success': False,
+                'message': _('Product %s is not in the current picking. Do you want to add it?') % product.name,
+                'product_not_in_picking': True,
                 'product_id': product.id,
-                'product_uom_id': product.uom_id.id,
-                'picking_id': picking.id,
-                'location_id': picking.location_id.id,
-                'location_dest_id': picking.location_dest_id.id,
-            })
+                'product_name': product.name
+            }
 
         new_qty_done = move_line.qty_done + quantity
         initial_demand = move_line.move_id.product_uom_qty
@@ -55,5 +68,24 @@ class StockPicking(models.Model):
                 'location_dest_id': picking.location_dest_id.id,
                 'qty_done': quantity,
             })
+
+        return True
+
+    @api.model
+    def add_product_to_picking(self, picking_id, product_id, quantity):
+        picking = self.browse(picking_id)
+        product = self.env['product.product'].browse(product_id)
+
+        move = self.env['stock.move'].create({
+            'name': product.name,
+            'product_id': product.id,
+            'product_uom_qty': quantity,
+            'product_uom': product.uom_id.id,
+            'picking_id': picking.id,
+            'location_id': picking.location_id.id,
+            'location_dest_id': picking.location_dest_id.id,
+        })
+        move._action_confirm()
+        move._action_assign()
 
         return True

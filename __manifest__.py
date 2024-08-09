@@ -13,6 +13,7 @@
         'views/stock_picking_barcode_views.xml',
         'views/product_variant_views.xml',
         'views/templates.xml',
+        'views/res_config_settings_views.xml',
     ],
     'demo': [
         'demo/demo.xml',
