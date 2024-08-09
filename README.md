@@ -4,17 +4,17 @@
 The Product Pick Barcode module enhances Odoo's stock management capabilities by adding barcode scanning functionality to stock picking and inventory adjustment processes. This module streamlines warehouse operations, improves accuracy, and increases efficiency in inventory management.
 
 ## Key Features
-- Multi-format product identification: Support for barcodes, QR codes, and internal references
+- Product identification with Barcodes, QR codes, and Internal references
 - Integrated barcode scanning interface for stock picking, incoming shipments, and inventory adjustment forms
-- Real-time quantity updates: Immediately updates product quantities in the current operation when scanned
+- Immediately updates product quantities in the current operation when scanned
 - User-friendly notifications for successful scans and errors
 - Configurable product scan options: Barcode, QR Code, Internal Reference, or All
 - Incoming shipment support: Scan products and serial numbers for efficient receipt processing
-- Serial number assignment: Assigns serial numbers to products during incoming shipments
+- Assigns serial numbers to products during incoming shipments
 - Inventory adjustment: Barcode scanning functionality for streamlined inventory counts
 - Improved error handling: Enhanced messages for various scenarios during scanning
-- Mobile-friendly interface: Optimized for use with handheld scanners
-- Flexible product identification: Choose between barcode, QR code, internal reference, or all methods
+- Optimized for use with handheld scanners
+- Add option to product between barcode, QR code, internal reference
 
 ## Installation
 1. Place the `dh_product_pick_barcode` folder in your Odoo addons directory.
