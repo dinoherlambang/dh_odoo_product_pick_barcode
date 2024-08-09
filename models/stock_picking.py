@@ -10,20 +10,7 @@ class StockPicking(models.Model):
         if picking.state == 'done':
             return {'success': False, 'message': _('The picking is already validated')}
 
-        scan_option = self.env['ir.config_parameter'].sudo().get_param('dh_product_pick_barcode.product_scan_option', 'barcode')
-        
-        if scan_option == 'barcode':
-            product = self.env['product.product'].search([('barcode', '=', barcode)], limit=1)
-        elif scan_option == 'qrcode':
-            product = self.env['product.product'].search([('qr_code', '=', barcode)], limit=1)
-        elif scan_option == 'internal_reference':
-            product = self.env['product.product'].search([('default_code', '=', barcode)], limit=1)
-        else:  # 'all' option
-            product = self.env['product.product'].search(['|', '|',
-                ('barcode', '=', barcode),
-                ('qr_code', '=', barcode),
-                ('default_code', '=', barcode)
-            ], limit=1)
+        product = self._find_product_by_scan_option(barcode)
 
         if not product:
             return {'success': False, 'message': _('No product found with this code')}
@@ -47,9 +34,60 @@ class StockPicking(models.Model):
             }
 
     @api.model
+    def process_barcode_from_ui_incoming(self, picking_id, barcode, quantity=1):
+        picking = self.browse(picking_id)
+        if picking.state == 'done':
+            return {'success': False, 'message': _('The picking is already validated')}
+
+        product = self._find_product_by_scan_option(barcode)
+
+        if not product:
+            # Check if the scanned barcode is a serial number
+            lot = self.env['stock.production.lot'].search([('name', '=', barcode)], limit=1)
+            if lot:
+                product = lot.product_id
+            else:
+                return {'success': False, 'message': _('No product or serial number found with this code')}
+
+        move_line = picking.move_line_ids.filtered(lambda l: l.product_id == product)
+        if move_line:
+            if lot:
+                if move_line.lot_id:
+                    return {'success': False, 'message': _('Serial number already set for this product')}
+                move_line.lot_id = lot.id
+            move_line.qty_done += quantity
+            return {'success': True, 'message': _('Quantity updated for %s') % product.name}
+        else:
+            new_move_line = self.env['stock.move.line'].create({
+                'product_id': product.id,
+                'product_uom_id': product.uom_id.id,
+                'picking_id': picking.id,
+                'location_id': picking.location_id.id,
+                'location_dest_id': picking.location_dest_id.id,
+                'qty_done': quantity,
+                'lot_id': lot.id if lot else False,
+            })
+            return {'success': True, 'message': _('Product added: %s') % product.name}
+
+    def _find_product_by_scan_option(self, barcode):
+        scan_option = self.env['ir.config_parameter'].sudo().get_param('dh_product_pick_barcode.product_scan_option', 'barcode')
+        if scan_option == 'barcode':
+            return self.env['product.product'].search([('barcode', '=', barcode)], limit=1)
+        elif scan_option == 'qrcode':
+            return self.env['product.product'].search([('qr_code', '=', barcode)], limit=1)
+        elif scan_option == 'internal_reference':
+            return self.env['product.product'].search([('default_code', '=', barcode)], limit=1)
+        else:  # 'all' option
+            return self.env['product.product'].search(['|', '|',
+                ('barcode', '=', barcode),
+                ('qr_code', '=', barcode),
+                ('default_code', '=', barcode)
+            ], limit=1)
+
+    @api.model
     def force_update_quantity(self, picking_id, barcode, quantity):
         picking = self.browse(picking_id)
-        product = self.env['product.product'].search([('barcode', '=', barcode)], limit=1)
+        product = self._find_product_by_scan_option(barcode)
         move_line = picking.move_line_ids.filtered(lambda l: l.product_id == product)
         
         if move_line:

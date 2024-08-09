@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_picking_form_barcode" model="ir.ui.view">
         <field name="name">stock.picking.form.barcode</field>
@@ -7,11 +8,17 @@
             <xpath expr="//form" position="inside">
                 <field name="state" invisible="1"/>
                 <field name="picking_type_code" invisible="1"/>
-                <div class="o_barcode_scanner" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}">
+                <div class="o_barcode_scanner" attrs="{'invisible': ['|', ('state', 'in', ('done', 'cancel')), ('picking_type_code', '!=', 'outgoing')]}">
                     <h1>Scan products</h1>
                     <input type="text" class="o_barcode_input" autofocus="autofocus"/>
                     <input type="number" class="o_quantity_input" placeholder="Quantity" min="1" value="1"/>
                     <button name="process_barcode_from_ui" string="Add" type="object" class="btn btn-primary"/>
+                </div>
+                <div class="o_barcode_scanner" attrs="{'invisible': ['|', ('state', 'in', ('done', 'cancel')), ('picking_type_code', '!=', 'incoming')]}">
+                    <h1>Scan products and serial numbers</h1>
+                    <input type="text" class="o_barcode_input" autofocus="autofocus"/>
+                    <input type="number" class="o_quantity_input" placeholder="Quantity" min="1" value="1"/>
+                    <button name="process_barcode_from_ui_incoming" string="Add" type="object" class="btn btn-primary"/>
                 </div>
             </xpath>
         </field>

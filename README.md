@@ -16,6 +16,8 @@ The Product Pick Barcode module enhances Odoo's stock management capabilities by
 - Inventory adjustment: Barcode scanning functionality for inventory counts
 - Improved error handling: Enhanced messages for invalid barcodes or products not in the current operation
 - Mobile-friendly interface: Optimized for use with handheld scanners
+- Incoming shipment support: Scan products and serial numbers for easy receipt
+- Automatic serial number assignment for incoming products
 - Flexible product identification: Choose between barcode, QR code, internal reference, or all methods
 
 ## Installation

@@ -14,12 +14,14 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
             var self = this;
             var barcode = ev.data.barcode;
             var quantity = parseInt($('.o_quantity_input').val()) || 1;
-        
+
             this.do_notify(_t("Scanning"), _t("Processing barcode: ") + barcode, false);
-        
+
             var model = this.model;
-            var method = 'process_barcode_from_ui';
-        
+            var method = this.modelName === 'stock.picking' && this.record.data.picking_type_code === 'incoming'
+                ? 'process_barcode_from_ui_incoming'
+                : 'process_barcode_from_ui';
+
             this._rpc({
                 model: model,
                 method: method,
@@ -31,7 +33,6 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
                 } else {
                     if (result.excess) {
                         self.do_warn(_t("Excess Quantity"), result.message, function () {
-                            // Callback function to force update if user confirms
                             self._rpc({
                                 model: model,
                                 method: 'force_update_quantity',
@@ -42,7 +43,6 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
                         });
                     } else if (result.product_not_in_picking) {
                         self.do_warn(_t("Product Not in Picking"), result.message, function () {
-                            // Callback function to add product if user confirms
                             self._rpc({
                                 model: model,
                                 method: 'add_product_to_picking',
@@ -56,7 +56,7 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
                     }
                 }
             }).guardedCatch(function (error) {
-                self.do_warn(_t("Error"), _t("An error occurred while processing the barcode. Please try again."));
+                self.do_warn(_t("Error"), _t("An error occurred while processing the barcode."));
             });
         }
     });
