@@ -5,19 +5,19 @@ import random
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    ean13 = fields.Char(string='EAN-13 Barcode', copy=False, index=True)
+    barcode = fields.Char(string='Barcode', copy=False, index=True)
     qr_code = fields.Char(string='QR Code', copy=False, index=True)
 
-    @api.constrains('ean13')
-    def _check_ean13(self):
+    @api.constrains('barcode')
+    def _check_barcode(self):
         for product in self:
-            if product.ean13 and not product.ean13.isdigit():
-                raise ValidationError('EAN-13 Barcode must contain only digits.')
+            if product.barcode and not product.barcode.isdigit():
+                raise ValidationError('Barcode must contain only digits.')
 
-    def action_generate_ean13(self):
+    def action_generate_barcode(self):
         for product in self:
-            if not product.ean13:
-                product.ean13 = ''.join([str(random.randint(0, 9)) for _ in range(13)])
+            if not product.barcode:
+                product.barcode = ''.join([str(random.randint(0, 9)) for _ in range(13)])
 
 class StockInventory(models.Model):
     _inherit = 'stock.inventory'
@@ -31,14 +31,14 @@ class StockInventory(models.Model):
         scan_option = self.env['ir.config_parameter'].sudo().get_param('dh_product_pick_barcode.product_scan_option', 'barcode')
         
         if scan_option == 'barcode':
-            product = self.env['product.product'].search([('ean13', '=', barcode)], limit=1)
+            product = self.env['product.product'].search([('barcode', '=', barcode)], limit=1)
         elif scan_option == 'qrcode':
             product = self.env['product.product'].search([('qr_code', '=', barcode)], limit=1)
         elif scan_option == 'internal_reference':
             product = self.env['product.product'].search([('default_code', '=', barcode)], limit=1)
         else:  # 'all' option
             product = self.env['product.product'].search(['|', '|',
-                ('ean13', '=', barcode),
+                ('barcode', '=', barcode),
                 ('qr_code', '=', barcode),
                 ('default_code', '=', barcode)
             ], limit=1)
@@ -56,13 +56,3 @@ class StockInventory(models.Model):
 
         line.product_qty += quantity
         return {'success': True, 'message': f'Quantity updated: {product.name} (+{quantity})'}
-
-class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
-
-    product_scan_option = fields.Selection([
-        ('barcode', 'Barcode'),
-        ('qrcode', 'QR Code'),
-        ('internal_reference', 'Internal Reference'),
-        ('all', 'All')
-    ], string='Product Scan Option', default='barcode', config_parameter='dh_product_pick_barcode.product_scan_option')

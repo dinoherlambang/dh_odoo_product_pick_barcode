@@ -5,7 +5,9 @@
         <field name="inherit_id" ref="product.product_product_tree_view"/>
         <field name="arch" type="xml">
             <tree>
-                <field name="ean13"/>
+                <field name="barcode"/>
+                <field name="qr_code"/>
+                <field name="default_code"/>
             </tree>
         </field>
     </record>
@@ -16,8 +18,9 @@
         <field name="inherit_id" ref="product.product_normal_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='default_code']" position="after">
-                <field name="ean13"/>
-                <button name="action_generate_ean13" string="Generate EAN-13" type="object" class="oe_inline oe_edit_only" attrs="{'invisible': [('ean13', '!=', False)]}"/>
+                <field name="barcode"/>
+                <field name="qr_code"/>
+                <button name="action_generate_barcode" string="Generate Barcode" type="object" class="oe_inline oe_edit_only" attrs="{'invisible': [('barcode', '!=', False)]}"/>
             </xpath>
         </field>
     </record>
@@ -28,7 +31,8 @@
         <field name="inherit_id" ref="product.product_search_form_view"/>
         <field name="arch" type="xml">
             <field name="name" position="after">
-                <field name="ean13" string="EAN-13 Barcode"/>
+                <field name="barcode" string="Barcode"/>
+                <field name="qr_code" string="QR Code"/>
             </field>
         </field>
     </record>

@@ -13,14 +13,14 @@ class StockPicking(models.Model):
         scan_option = self.env['ir.config_parameter'].sudo().get_param('dh_product_pick_barcode.product_scan_option', 'barcode')
         
         if scan_option == 'barcode':
-            product = self.env['product.product'].search([('ean13', '=', barcode)], limit=1)
+            product = self.env['product.product'].search([('barcode', '=', barcode)], limit=1)
         elif scan_option == 'qrcode':
-            product = self.env['product.product'].search([('qr_code', '=', barcode)], limit=1)  # Assuming you have a qr_code field
+            product = self.env['product.product'].search([('qr_code', '=', barcode)], limit=1)
         elif scan_option == 'internal_reference':
             product = self.env['product.product'].search([('default_code', '=', barcode)], limit=1)
         else:  # 'all' option
             product = self.env['product.product'].search(['|', '|',
-                ('ean13', '=', barcode),
+                ('barcode', '=', barcode),
                 ('qr_code', '=', barcode),
                 ('default_code', '=', barcode)
             ], limit=1)
@@ -29,32 +29,27 @@ class StockPicking(models.Model):
             return {'success': False, 'message': _('No product found with this code')}
 
         move_line = picking.move_line_ids.filtered(lambda l: l.product_id == product)
-        if not move_line:
+        if move_line:
+            if move_line.qty_done + quantity > move_line.product_uom_qty:
+                return {
+                    'success': False,
+                    'message': _('Scanned quantity exceeds the planned quantity.'),
+                    'excess': True
+                }
+            move_line.qty_done += quantity
+            return {'success': True, 'message': _('Quantity updated for %s') % product.name}
+        else:
             return {
                 'success': False,
-                'message': _('Product %s is not in the current picking. Do you want to add it?') % product.name,
+                'message': _('Product not in the picking. Do you want to add it?'),
                 'product_not_in_picking': True,
-                'product_id': product.id,
-                'product_name': product.name
+                'product_id': product.id
             }
-
-        new_qty_done = move_line.qty_done + quantity
-        initial_demand = move_line.move_id.product_uom_qty
-
-        if new_qty_done > initial_demand:
-            return {
-                'success': False,
-                'message': _('Warning: The scanned quantity (%s) exceeds the initial demand (%s) for %s') % (new_qty_done, initial_demand, product.name),
-                'excess': True
-            }
-
-        move_line.qty_done = new_qty_done
-        return {'success': True, 'message': _('Quantity updated: %s (+%s)') % (product.name, quantity)}
 
     @api.model
     def force_update_quantity(self, picking_id, barcode, quantity):
         picking = self.browse(picking_id)
-        product = self.env['product.product'].search([('ean13', '=', barcode)], limit=1)
+        product = self.env['product.product'].search([('barcode', '=', barcode)], limit=1)
         move_line = picking.move_line_ids.filtered(lambda l: l.product_id == product)
         
         if move_line:
