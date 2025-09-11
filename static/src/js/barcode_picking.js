@@ -13,7 +13,8 @@ odoo.define('dh_product_pick_barcode.barcode_picking', function (require) {
         _onBarcodeScanned: function (ev) {
             var self = this;
             var barcode = ev.data.barcode;
-            var quantity = parseInt($('.o_quantity_input').val()) || 1;
+            // Auto quantity: always increment by 1 per scan
+            var quantity = 1;
 
             this.do_notify(_t("Scanning"), _t("Processing barcode: ") + barcode, false);
 
