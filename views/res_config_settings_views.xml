@@ -6,19 +6,15 @@
         <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@id='production_lot_info']" position="after">
-                <div class="col-12 col-lg-6 o_setting_box">
-                    <div class="o_setting_left_pane">
-                        <span class="o_setting_label">
-                            Product Scan Option
-                        </span>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <label for="product_scan_option" class="o_light_label"/>
-                        <div class="text-muted">
-                            Choose how to scan products in inventory operations
-                        </div>
-                        <div class="content-group">
-                            <div class="mt16">
+                <div class="row mt16 o_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="product_scan_option" class="o_form_label"/>
+                            <div class="text-muted">
+                                Choose how to scan products in inventory operations
+                            </div>
+                            <div class="content-group mt16">
                                 <field name="product_scan_option" widget="radio"/>
                             </div>
                         </div>

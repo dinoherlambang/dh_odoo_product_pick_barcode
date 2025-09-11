@@ -31,12 +31,12 @@ This guide explains how to install, configure, and use the dh_odoo_product_pick_
    - Check `Settings > Users & Companies > Users` for permissions.
 
 3. **Product Scan Option (New Feature)**
-   - Go to `Settings > Inventory`.
-   - Find the section "Product Scan Option".
-   - Choose how barcode scanning updates product quantity:
-     - **Auto Increment (each scan adds 1):** Fast workflow, each scan increases quantity by 1 automatically.
-     - **Manual Entry (use quantity field):** You can manually enter the quantity before scanning, for bulk or custom updates.
-   - Save your settings. The module will use your selected option for all barcode picking and inventory operations.
+    - Go to `Settings > Inventory`.
+    - In the Traceability section, find "Product Scan Option"—styled and grouped like other Odoo settings.
+    - Choose how barcode scanning updates product quantity:
+       - **Auto Increment (each scan adds 1):** Each scan increases quantity by 1 automatically.
+       - **Manual Entry (use quantity field):** Manually enter the quantity before scanning, for bulk or custom updates.
+    - Save your settings. The module will use your selected option for all barcode picking and inventory operations.
 
 ---
 

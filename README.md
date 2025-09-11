@@ -23,16 +23,20 @@ The Product Pick Barcode module enhances Odoo's stock management capabilities by
 
 ## Configuration
 1. Go to Inventory > Configuration > Settings.
-2. Locate the "Product Scan Option" section.
-3. Choose the preferred scan option: Barcode, QR Code, Internal Reference, or All.
+2. In the Traceability section, locate "Product Scan Option"—styled and grouped like other Odoo settings.
+3. Choose your preferred scan mode:
+	- **Auto Increment (each scan adds 1):** Each scan increases quantity by 1 automatically.
+	- **Manual Entry (use quantity field):** Manually enter the quantity before scanning for bulk or custom updates.
 4. Save the configuration.
 
 ## Usage
 ### Stock Picking (Outgoing Shipments)
 1. Open a stock picking form (e.g., delivery order or internal transfer).
-2. Locate the "Scan products" section at the bottom of the form.
+2. Locate the "Scan products" section in the form.
 3. Use a barcode scanner to scan product barcodes, QR codes, or internal references (based on configuration).
-4. Optionally, enter a quantity before scanning if adding multiple units.
+4. Depending on your scan option:
+	- **Auto Increment:** Each scan adds 1 to the quantity automatically.
+	- **Manual Entry:** Enter the desired quantity in the quantity field before scanning.
 5. The system automatically updates quantities or adds new lines as needed.
 6. Complete the picking process as usual.
 
