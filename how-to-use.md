@@ -18,6 +18,7 @@ This guide explains how to install, configure, and use the dh_odoo_product_pick_
 
 ---
 
+
 ## 2. Configuration
 
 1. **Barcode Field on Products**
@@ -29,9 +30,18 @@ This guide explains how to install, configure, and use the dh_odoo_product_pick_
    - Ensure users have access to Inventory and Picking operations.
    - Check `Settings > Users & Companies > Users` for permissions.
 
+3. **Product Scan Option (New Feature)**
+   - Go to `Settings > Inventory`.
+   - Find the section "Product Scan Option".
+   - Choose how barcode scanning updates product quantity:
+     - **Auto Increment (each scan adds 1):** Fast workflow, each scan increases quantity by 1 automatically.
+     - **Manual Entry (use quantity field):** You can manually enter the quantity before scanning, for bulk or custom updates.
+   - Save your settings. The module will use your selected option for all barcode picking and inventory operations.
+
 ---
 
 ## 3. Using Barcode Picking
+
 
 ### A. Picking Products with Barcode
 
@@ -39,20 +49,26 @@ This guide explains how to install, configure, and use the dh_odoo_product_pick_
 2. Open a picking (delivery or receipt).
 3. In the picking form, you will see a `Scan products` section (if picking is not done/cancelled).
 4. Use a barcode scanner or manually enter the barcode in the input field.
-5. Enter the quantity (default is 1).
-6. Click `Add`.
+5. Depending on your scan option:
+   - **Auto Increment:** Just scan the barcode; each scan adds 1 to the quantity automatically.
+   - **Manual Entry:** Enter the desired quantity in the quantity field before scanning, then scan the barcode.
+6. Click `Add` if needed.
 7. The system will:
    - Match the barcode to a product.
    - Update the picked quantity.
    - Show success or error messages (wrong product, excess quantity, product not found).
+
 
 ### B. Inventory Adjustments with Barcode
 
 1. Go to `Inventory > Operations > Inventory Adjustments`.
 2. Open an inventory in progress.
 3. In the form, you will see a `Scan products` section.
-4. Scan or enter the product barcode, set quantity, and click `Add`.
-5. The system will update the inventory line for the scanned product.
+4. Depending on your scan option:
+   - **Auto Increment:** Just scan the barcode; each scan adds 1 to the quantity automatically.
+   - **Manual Entry:** Enter the desired quantity in the quantity field before scanning, then scan the barcode.
+5. Click `Add` if needed.
+6. The system will update the inventory line for the scanned product.
 
 ---
 

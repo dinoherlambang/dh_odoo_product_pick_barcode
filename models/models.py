@@ -38,4 +38,30 @@ class StockInventory(models.Model):
             return {'success': False, 'message': _('Product not in the original inventory. Cannot be added.')}
 
         line.product_qty += quantity
+
+
+# Add product_scan_option to res.config.settings
+from odoo import models, fields, api, _
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    product_scan_option = fields.Selection([
+        ('auto', 'Auto Increment (each scan adds 1)'),
+        ('manual', 'Manual Entry (use quantity field)'),
+    ],
+        string='Product Scan Option',
+        default='auto',
+        help='Choose how barcode scanning updates product quantity in picking/inventory.')
+
+    def set_values(self):
+        super(ResConfigSettings, self).set_values()
+        self.env['ir.config_parameter'].sudo().set_param('dh_odoo_product_pick_barcode.product_scan_option', self.product_scan_option)
+
+    @api.model
+    def get_values(self):
+        res = super(ResConfigSettings, self).get_values()
+        option = self.env['ir.config_parameter'].sudo().get_param('dh_odoo_product_pick_barcode.product_scan_option', default='auto')
+        res.update(product_scan_option=option)
+        return res
         return {'success': True, 'message': _('Quantity updated: %s (+%s)') % (product.name, quantity)}
